@@ -1,7 +1,13 @@
 package com.nortec.escola.modelo;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Professor {
     
+    @Id
+    private Long id;
     private String nome;
     private String cpf;
     
@@ -12,6 +18,14 @@ public class Professor {
     public Professor(String nome, String cpf) {
         this.nome = nome;
         this.cpf = cpf;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {

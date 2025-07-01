@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+
 @RestController
 @RequestMapping( value = "/professor")
 public class ProfessorController {
@@ -16,6 +18,11 @@ public class ProfessorController {
     @GetMapping( value = "/ola")
     public String ola() {
         return "<h1>Norberto</h1>";
+    }  
+    
+    @GetMapping( value = "/insert")
+    public String insert() {
+        return "<h1>Tentando Salvar o Professor dos Alunos</h1>";
     }
 
 }
