@@ -44,7 +44,7 @@ public class Professor {
         this.cpf = cpf;
     }
 
-    @Override
+    @Override //sobrescrito
     public String toString() {
         return "Professor [nome=" + nome + ", cpf=" + cpf + "]";
     }
