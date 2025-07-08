@@ -3,6 +3,7 @@ package com.nortec.escola.controller;
 
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,16 @@ public class ProfessorController {
         System.out.println("Chamou o método ola");
         return "Norberto"; //return -> Devolve o retorno para quem chamou
     }  
+
+    @GetMapping( value = "/listaprofessor")
+    public List<Professor> findAll() {
+        return professorRepository.findAll();
+    }
+    
+
+
+
+
     
     @PostMapping(value = "/insert")  
     public ResponseEntity<?> insert(@RequestBody ProfessorDto professorDto) {
@@ -56,3 +67,4 @@ public class ProfessorController {
     }
 
 }
+
