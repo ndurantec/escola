@@ -53,16 +53,17 @@ public class ProfessorController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping( value = "/consultaPorNome/{nome}")
+    public ResponseEntity<Professor> buscarProfessorPorNome(@PathVariable String nome) {
+        Professor professorBanco =  professorRepository.findByNome(nome);
+        return ResponseEntity.ok().body(professorBanco);
+    }
+    
     @GetMapping( value = "/{id}")
     public ResponseEntity<Professor> buscarProfessorPor(@PathVariable Long id) {
         Optional<Professor> professorBanco =  professorRepository.findById(id);
-
-        //Professor professor = professorBanco.get();
-
         return ResponseEntity.ok(professorBanco.get());
     }
-    
-
 
 
     @PostMapping(value = "/insert")  
