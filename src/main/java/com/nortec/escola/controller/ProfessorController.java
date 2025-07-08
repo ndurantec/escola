@@ -4,10 +4,13 @@ package com.nortec.escola.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,11 +47,24 @@ public class ProfessorController {
         return professorRepository.findAll();
     }
     
+    @DeleteMapping( value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {       
+        professorRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 
+    @GetMapping( value = "/{id}")
+    public ResponseEntity<Professor> buscarProfessorPor(@PathVariable Long id) {
+        Optional<Professor> professorBanco =  professorRepository.findById(id);
 
+        //Professor professor = professorBanco.get();
 
-
+        return ResponseEntity.ok(professorBanco.get());
+    }
     
+
+
+
     @PostMapping(value = "/insert")  
     public ResponseEntity<?> insert(@RequestBody ProfessorDto professorDto) {
 
@@ -65,6 +81,8 @@ public class ProfessorController {
 
         return ResponseEntity.created(uri).body(professor);
     }
+
+    
 
 }
 
