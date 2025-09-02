@@ -15,6 +15,10 @@ public class ProfessorDto {
         this.nome = nome;
         this.cpf = cpf;
     }
+    
+    public Professor novoProfessor() {
+        return new Professor(this.nome, this.cpf);
+    }
 
     public String getNome() {
         return nome;
@@ -32,7 +36,5 @@ public class ProfessorDto {
         this.cpf = cpf;
     }
 
-    public Professor novoProfessor() {
-        return new Professor(this.nome, this.cpf);
-    }
+
 }
