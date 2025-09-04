@@ -1,6 +1,7 @@
 package com.nortec.escola.dto;
 
 import com.nortec.escola.modelo.Materia;
+import com.nortec.escola.modelo.Professor;
 
 public class MateriaDto {
     
@@ -41,8 +42,16 @@ public class MateriaDto {
         return "MateriaDto [nome=" + nome + ", professor=" + professor + "]";
     }
 
-    public Materia materiaNova() {
-        return new Materia(this.nome, this.professor);
+    public Materia novaMateria() {
+        return new Materia(this.nome, this.professor.novoProfessor());
+    }
+
+    public String nomeDoProfessor() {
+        return this.professor.getNome();
+    }
+
+    public Professor novoProfessor() {
+        return new Professor(this.getProfessor().getNome(), this.getProfessor().getCpf());
     }
     
     // @Override

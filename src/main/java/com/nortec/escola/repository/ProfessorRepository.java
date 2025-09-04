@@ -10,5 +10,7 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long> {
     @Query( value = "select * from professor where nome like ?", nativeQuery = true )   
     public Professor findByNome(String nome);
 
+    public boolean existsByNome(String nome);
 
+  
 }
