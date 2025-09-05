@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nortec.escola.dto.MateriaDto;
-import com.nortec.escola.dto.MateriaDto1;
-import com.nortec.escola.dto.ProfessorDto;
 import com.nortec.escola.modelo.Materia;
 import com.nortec.escola.modelo.Professor;
 import com.nortec.escola.repository.MateriaRepository;
@@ -34,8 +32,79 @@ public class MateriaController {
     @Autowired
     private ProfessorRepository professorRepository;
 
-    @PostMapping("/cadMat") // injeção de dependência
-    public ResponseEntity<?> cadastrarMateria(@RequestBody MateriaDto materiaDto) {
+    @PostMapping("/salvarQuintoExemplo") // injeção de dependência
+    public ResponseEntity<?> salvarQuintoExemplo(@RequestBody MateriaDto materiaDto) {
+         // 2) se o professor não existe então cria o professor
+        Professor professor =  Optional.ofNullable(                              
+                        professorRepository.findByNome( materiaDto.nomeDoProfessor() ) )                                    
+                        .orElseGet( () -> professorRepository.save(materiaDto.novoProfessor() ) );
+
+        // 3) verfica se a materia existe (pela lógica do seu repositório)
+        return  Optional.ofNullable(                              
+                        
+                        materiaRepository.buscarMateria( materiaDto.getNome() ) )
+                        
+                        .map(m -> ResponseEntity.status(HttpStatus.CONFLICT).body(m))
+                        
+                        .orElseGet( () -> { 
+                            
+                            Materia materiaNova = materiaDto.novaMateria();
+
+                            materiaNova.setProfessor(professor);
+                            
+                            Materia materiaSalva = materiaRepository.save( materiaNova );
+
+                            URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                                    .path("/{id}")
+                                    .buildAndExpand(materiaSalva.getId())
+                                    .toUri();
+                            return ResponseEntity.created(uri).body(materiaSalva);
+                            
+                        });       
+    }
+
+    @PostMapping("/salvarQuartoExemplo") // injeção de dependência
+    public ResponseEntity<?> salvarQuartoExemplo(@RequestBody MateriaDto materiaDto) {
+       
+        // 2) se o professor não existe então cria o professor
+        Professor professor =  Optional.ofNullable(                              
+                        professorRepository.findByNome( materiaDto.nomeDoProfessor() ) )                                    
+                        .orElseGet( () -> professorRepository.save(materiaDto.novoProfessor() ) );
+
+        // 3) verfica se a materia existe (pela lógica do seu repositório)
+        return  Optional.ofNullable(                              
+                        
+                        materiaRepository.buscarMateria( materiaDto.getNome() ) )
+                        
+                        .map(m -> ResponseEntity.status(HttpStatus.CONFLICT).body(m))
+                        
+                        .orElseGet( () -> { 
+                            
+                            Materia materiaNova = materiaDto.novaMateria();
+
+                            // Refatorando
+                            //materiaDto.novaMateriaComProfessor(professor);
+
+                            materiaNova.setProfessor(professor);
+                            
+                            Materia materiaSalva = materiaRepository.save( materiaNova );
+
+                            URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                                    .path("/{id}")
+                                    .buildAndExpand(materiaSalva.getId())
+                                    .toUri();
+                            return ResponseEntity.created(uri).body(materiaSalva);
+                            
+                        });       
+      
+    }
+
+    @PostMapping("/salvarTerceiroExemplo") // injeção de dependência
+    public ResponseEntity<?> salvarTerceiroExemplo(@RequestBody MateriaDto materiaDto) {
+
+        // ================================================================
+        // Terceiro Exemplo
+        // ================================================================
 
         // 1) verificar se o professor existe (pelo nome, conforme seu código)
         Professor professorDoBanco = professorRepository.findByNome(materiaDto.nomeDoProfessor());
@@ -43,13 +112,18 @@ public class MateriaController {
         // 2) se o professor não existe então cria o professor
         Professor professor;
         if (professorDoBanco == null) {
+
             // usa o helper do DTO para criar a entidade (ainda não persistida)
             Professor novo = materiaDto.novoProfessor();
+
             // salva no banco e recebe o professor com id
             professor = professorRepository.save(novo);
+
         } else {
+
             // depois de recuperado, devolve o professor do banco
             professor = professorDoBanco;
+
         }
 
         // 3) verfica se a materia existe (pela lógica do seu repositório)
@@ -64,6 +138,7 @@ public class MateriaController {
         // 5) se a materia não existe então cria a materia (usa o DTO para criar a
         // instância)
         Materia materia = materiaDto.novaMateria(); // cria com um Professor "novo" do DTO
+
         // 6) agora que eu já tenho o professor persistido, substituo/associo
         // corretamente
         materia.setProfessor(professor);
@@ -73,59 +148,67 @@ public class MateriaController {
         Materia materiaSalva = materiaRepository.save(materia);
 
         // 8) depois de criado a materia devolve a materia criada
-        return ResponseEntity.status(HttpStatus.CREATED).body(materiaSalva);
+        // return ResponseEntity.status(HttpStatus.CREATED).body(materiaSalva);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(materiaSalva.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(materiaSalva);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @PostMapping("/salvarSegundoExemplo") // injeção de dependência
+    public ResponseEntity<?> salvarSegundoExemplo(@RequestBody MateriaDto materiaDto) {
+        // ================================================================
+        // Segundo Exemplo
+        // ================================================================
         // verificar se o professor existe
-        // if (
-        // professorRepository.existsByNomeProfessor(materiaDto.getProfessor().getNome())
-        // ) {
-        // // se o professor existe
+        Materia materiaNova = null;
+        if (professorRepository.existsByNome(materiaDto.getProfessor().getNome())) {
+            // se o professor existe
 
-        // Professor professor = professorRepository.findByNome(
-        // materiaDto.getProfessor().getNome());
+            Professor professor = professorRepository.findByNome(materiaDto.getProfessor().getNome());
 
-        // if ( materiaRepository.existsByNomeMateria(materiaDto.getNome()) ) {
+            if (materiaRepository.existsByNome(materiaDto.getNome())) {
 
-        // Materia materia = materiaRepository.buscarMateria(materiaDto.getNome());
+                Materia materia = materiaRepository.buscarMateria(materiaDto.getNome());
 
-        // //adicionar o professor na materia
-        // materia.setProfessor(professor);
+                // adicionar o professor na materia
+                materia.setProfessor(professor);
 
-        // } else {
-        // Materia materiaNova = new Materia(materiaDto.getNome());
-        // materiaRepository.save(materiaNova);
-        // }
+            } else {
+                materiaNova = new Materia(materiaDto.getNome());
+                materiaRepository.save(materiaNova);
+            }
 
-        // } else {
-        // Professor professorNovo = new Professor(materiaDto.getProfessor().getNome(),
-        // materiaDto.getProfessor().getCpf());
-        // professorRepository.save(professorNovo);
+        } else {
 
-        // }
+            Professor professorNovo = new Professor(materiaDto.getProfessor().getNome(),
+                    materiaDto.getProfessor().getCpf());
 
-        // Materia materia = materiaDto.novaMateria();
-        // materiaRepository.save(materia);
-        // System.out.println(materia.toString());
-        // URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-        // .path("/{id}")
-        // .buildAndExpand(materia.getId())
-        // .toUri();
-        // return ResponseEntity.created(uri).body(materia);
-        //return null;
+            professorRepository.save(professorNovo);
+
+        }
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(materiaNova.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(materiaNova);
+    }
+
+    @PostMapping("/salvarPrimeiroExemplo") // injeção de dependência
+    public ResponseEntity<?> salvarPrimeiroExemplo(@RequestBody MateriaDto materiaDto) {
+        // ==================================================================
+        // Primeiro Exemplo --> Salvando no Banco de dados somente a materia
+        // ==================================================================
+        Materia materia = materiaDto.novaMateria();
+        materiaRepository.save(materia);
+        System.out.println(materia.toString());
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(materia.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(materia);
     }
 
     @GetMapping(value = "/imprimir") // Mapeamento do método imprimir. Usando o verbo Get -> Pegar ou Buscar
@@ -167,65 +250,5 @@ public class MateriaController {
         Materia Materia = materiaRepository.buscarMateria(nome);
         return ResponseEntity.ok().body(Materia);
     }
-
-    // Professor professor =
-    // professorRepository.findByNome(materiaDto.getProfessor().getNome());
-
-    // System.out.println("================================================");
-    // System.out.println("================================================");
-    // System.out.println("================================================");
-    // System.out.println( professor.toString() );
-    // System.out.println("================================================");
-    // System.out.println("================================================");
-    // System.out.println("================================================");
-
-    /*
-     * 
-     * //Cola a materia no objeto //busca a materia no banco de dados
-     * Materia materia = materiaRepository.buscarMateria(materiaDto.getNome());
-     * 
-     * Professor professor =
-     * professorRepository.findByNome(materiaDto.getProfessor().getNome());
-     * 
-     * Professor professorNovo = null;
-     * 
-     * //Se não achou no banco a materia o objeto está null
-     * if (professor == null) {
-     * //cria o objeto pra mim na memoria;
-     * Materia materiaNova = new Materia(materiaDto.getNome());
-     * 
-     * professorNovo = new Professor(materiaDto.getProfessor().getNome(),
-     * materiaDto.getProfessor().getCpf());
-     * 
-     * //salva o objeto da memoria no banco de dados
-     * professorRepository.save(professorNovo);
-     * } else {
-     * System.out.println("Já existe a professor no banco");
-     * }
-     * 
-     * //Se não achou no banco a materia o objeto está null
-     * if (materia == null) {
-     * //cria o objeto pra mim na memoria;
-     * Materia materiaNova = new Materia(materiaDto.getNome());
-     * 
-     * materiaNova.setProfessor(professorNovo);
-     * 
-     * //salva o objeto da memoria no banco de dados
-     * materiaRepository.save(materiaNova);
-     * } else {
-     * System.out.println("Já existe a matéria no banco");
-     * }
-     * 
-     * if ( materiaRepository.existsByNome(materiaDto.getNome()) ) {
-     * System.out.println("=============================================");
-     * System.out.println("=============================================");
-     * System.out.println("=============================================");
-     * System.out.println("Achou a materia");
-     * System.out.println("=============================================");
-     * System.out.println("=============================================");
-     * System.out.println("=============================================");
-     * }
-     * 
-     */
 
 }

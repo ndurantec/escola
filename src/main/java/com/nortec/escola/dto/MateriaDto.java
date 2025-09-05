@@ -46,6 +46,10 @@ public class MateriaDto {
         return new Materia(this.nome, this.professor.novoProfessor());
     }
 
+    public Materia novaMateriaComProfessor(Professor professor) {
+        return new Materia(this.nome, professor);
+    }
+
     public String nomeDoProfessor() {
         return this.professor.getNome();
     }
