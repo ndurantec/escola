@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 @RestController //Transforma a nossa classe em um controller antigamente chamdo bean
+@CrossOrigin("*")
 @RequestMapping( value = "/professor") //Mapeando a url, navegador chama pelo valor
 public class ProfessorController {
     
@@ -55,7 +57,7 @@ public class ProfessorController {
         professorRepository.save(professor);
         System.out.println(professor.toString());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                                             .path("/{id}")
+                                             .path("{/id}")
                                              .buildAndExpand(professor.getId())
                                              .toUri();
         return ResponseEntity.created(uri).body(professor);        
